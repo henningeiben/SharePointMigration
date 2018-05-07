@@ -32,13 +32,13 @@
   <content>
   <templateFile source="create-structure.ps1" destination=""/>  
   <file source="delete-structure.ps1" destination=""/>  
-  <file source="Microsoft.SharePoint.Client.dll" destination=""/>  
-  <file source="Microsoft.SharePoint.Client.Runtime.dll" destination=""/>
+  <file source="$PLASTER_PARAM_Edition/Microsoft.SharePoint.Client.dll" destination="Microsoft.SharePoint.Client.dll"/>  
+  <file source="$PLASTER_PARAM_Edition/Microsoft.SharePoint.Client.Runtime.dll" destination="Microsoft.SharePoint.Client.Runtime.dll"/>
   <file source="common-functions.psm1" destination="migrations/common-functions.psm1" />  
   <file condition='($PLASTER_PARAM_Edition -eq "Online")' source="nintex-functions-online.psm1" destination="migrations/nintex-functions.psm1" />  
   <file condition='($PLASTER_PARAM_Edition -ne "Online")' source="nintex-functions-onprem.psm1" destination="migrations/nintex-functions.psm1" />  
   <file source="down.ps1" destination="migrations/001/down.ps1" />
-  <file source="up.ps1" destination="migrations/001/up.ps1" />
+  <file source="up.ps1" destination="migrations/001/up.ps1" openInEditor="true" />
   <file source="site-columns.csv" destination="migrations/001/site-columns.csv" />
   <file source="site-lists.csv" destination="migrations/001/site-lists.csv" />
   <file source="site-contenttypes.csv" destination="migrations/001/site-contenttypes.csv" />
