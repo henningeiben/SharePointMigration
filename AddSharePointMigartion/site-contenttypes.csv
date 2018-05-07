@@ -1,0 +1,3 @@
+Name;ParentName;Columns
+btecQMDocument;Document;"btecApprover;btecApprovedOn;btecProcessOwner;btecReviewer"
+btecQMDocumentWorking;btecQMDocument;"btecEditor;btecPublishReference"

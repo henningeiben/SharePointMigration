@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<plasterManifest
+  schemaVersion="1.1"
+  templateType="Project" xmlns="http://www.microsoft.com/schemas/PowerShell/Plaster/v1">
+  <metadata>
+    <name>NewSharePointMigrationProject</name>
+    <id>dbd20685-9a27-44cb-b96c-4fb59ce029c7</id>
+    <version>1.0.0</version>
+    <title>NewSharePointMigrationProject</title>
+    <description>Creates a new SharePoint Infrastructure Project</description>
+    <author>Henning Eiben</author>
+    <tags>SharePoint</tags>
+  </metadata>
+  
+  <parameters>
+      <parameter name='FieldName' type='text' 
+               prompt='Enter the name of the field to store deployment-version'/>
+
+  <parameter name='Edition'
+               type='choice'
+               prompt='Select a target environment:'
+               default='0'
+               store='text' >
+       <choice label='201&amp;3'
+               help="On-Prem 2013"
+               value="2013"/>
+       <choice label='&amp;Office 365'
+               help="Online"
+               value="Online"/>
+    </parameter>
+  </parameters>
+  <content>
+  <templateFile source="create-structure.ps1" destination=""/>  
+  <file source="delete-structure.ps1" destination=""/>  
+  <file source="Microsoft.SharePoint.Client.dll" destination=""/>  
+  <file source="Microsoft.SharePoint.Client.Runtime.dll" destination=""/>
+  <file source="common-functions.psm1" destination="migrations/common-functions.psm1" />  
+  <file condition='($PLASTER_PARAM_Edition -eq "Online")' source="nintex-functions-online.psm1" destination="migrations/nintex-functions.psm1" />  
+  <file condition='($PLASTER_PARAM_Edition -ne "Online")' source="nintex-functions-onprem.psm1" destination="migrations/nintex-functions.psm1" />  
+  <file source="down.ps1" destination="migrations/001/down.ps1" />
+  <file source="up.ps1" destination="migrations/001/up.ps1" />
+  <file source="site-columns.csv" destination="migrations/001/site-columns.csv" />
+  <file source="site-lists.csv" destination="migrations/001/site-lists.csv" />
+  <file source="site-contenttypes.csv" destination="migrations/001/site-contenttypes.csv" />
+  <file source="site-views.csv" destination="migrations/001/site-views.csv" />
+  <message>Your new SharePoint Project is ready - build awesomeness!</message>
+  </content>
+</plasterManifest>

@@ -1,0 +1,7 @@
+InternalName;DisplayName;Description;Type;Options
+btecApprover;Freigeber;;User;
+btecApprovedOn;Freigegeben am;;DateTime;
+btecProcessOwner;Prozess Besitzer;;User;
+btecReviewer;Prüfer;;User;
+btecEditor;Bearbeiter;;User;
+btecPublishReference;Veröffentlichte Dokument-ID;;Number;
