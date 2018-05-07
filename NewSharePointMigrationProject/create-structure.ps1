@@ -37,18 +37,13 @@ Connect-PnPOnline -Url $webUrl -CurrentCredentials
     }
 %>
 
-$ctx = Get-PnPContext
-
-
 $allScripts = Get-ChildItem -Path "$dp0\migrations\" -Directory
 
 foreach ($currentScript in $allScripts) {    
-    # & "$dp0\migrations\$currentScript\run.ps1" -ctx $ctx
-
     $currentDeployment = $currentScript.Name
     $previousDeployment = "{0:000}" -f [math]::Max($currentDeployment - 1, 0);
 
-    Invoke-Migration -ctx $ctx `
+    Invoke-Migration `
         -fieldName "<%= $PLASTER_PARAM_FieldName %>" `
         -currentDeployment $currentDeployment `
         -targetDeployment $targetDeployment `

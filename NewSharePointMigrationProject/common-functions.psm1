@@ -1,9 +1,22 @@
+function Get-MigrationStatus() {
+    param(
+        [parameter(Mandatory = $true)]
+        [string] $fieldName
+    )
+    process {
+        $ctx = Get-PnPContext
+
+        $web = $ctx.Web
+        $allProps = $web.AllProperties
+        $ctx.Load($allProps)
+        $ctx.ExecuteQuery()
+        return $allProps[$fieldName]    
+    }
+}
+
 function Invoke-Migration() {
     [CmdletBinding()]
     param (
-        [parameter(Mandatory = $true)]
-        # [OfficeDevPnP.Core.PnPClientContext] $ctx,
-        $ctx,
         [parameter(Mandatory = $true)]
         [string] $path,
         [parameter(Mandatory = $true)]
@@ -18,7 +31,7 @@ function Invoke-Migration() {
     )
     process {
 
-        # $fieldName = "STWMS-Deployment-Version"
+        $ctx = Get-PnPContext
         $web = $ctx.Web
 
         $allProps = $web.AllProperties
@@ -35,7 +48,7 @@ function Invoke-Migration() {
 
         if ($deployVersion -ge $currentDeployment) {
             if ($down -and $currentDeployment -gt $targetDeployment) {
-                & "$path\down.ps1" -ctx $ctx
+                & "$path\down.ps1"
 
                 $allProps[$fieldName] = $previousDeployment
                 $web.Update()
@@ -52,7 +65,7 @@ function Invoke-Migration() {
                 Write-Host "Deployment $currentDeployment not yet applied; skipping"
             }
             else {
-                & "$path\up.ps1" -ctx $ctx
+                & "$path\up.ps1"
 
                 $allProps[$fieldName] = $currentDeployment
                 $web.Update()
@@ -66,4 +79,4 @@ function Invoke-Migration() {
     }
 }
 
-Export-ModuleMember -Function Invoke-Migration
+Export-ModuleMember -Function Invoke-Migration, Get-MigrationStatus

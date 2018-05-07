@@ -27,18 +27,14 @@ Import-Module "$dp0\migrations\common-functions.psm1"
 Import-Module "SharePointPnPPowerShellOnline"
 ### Authentication
 Connect-PnPOnline -Url $webUrl -UseWebLogin
-$ctx = Get-PnPContext
-
 
 $allScripts = Get-ChildItem -Path "$dp0\migrations\" -Directory | Sort-Object -Descending
 
 foreach ($currentScript in $allScripts) {    
-    # & "$dp0\migrations\$currentScript\run.ps1" -ctx $ctx -down -targetDeployment $targetDeployment
-
     $currentDeployment = $currentScript.Name
     $previousDeployment = "{0:000}" -f [math]::Max($currentDeployment - 1, 0);
 
-    Invoke-Migration -ctx $ctx `
+    Invoke-Migration `
         -fieldName "btecQM_Deployment_Version" `
         -currentDeployment $currentDeployment `
         -targetDeployment $targetDeployment `
