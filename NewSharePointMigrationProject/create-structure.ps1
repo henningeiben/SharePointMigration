@@ -4,7 +4,7 @@ param (
 )
 
 ### Config-Section
-#$webUrl = "https://busitec-my.sharepoint.com/personal/eiben_busitec_de/test/qm2"
+#$webUrl = "<%= $PLASTER_PARAM_SiteUrl %>"
 
 ### Loading Libraries
 $script:0 = $myInvocation.MyCommand.Definition
