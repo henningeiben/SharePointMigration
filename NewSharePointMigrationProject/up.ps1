@@ -1,7 +1,7 @@
 $script:0 = $myInvocation.MyCommand.Definition
 $script:dp0 = Split-Path -Parent -Path $0
 
-$groupName = "busitec QM"
+$groupName = "busitec Customs Groups"
 
 $siteColumns = Import-Csv "$dp0\site-columns.csv" -Delimiter ";" -Encoding Default
 $siteContenTypes = Import-Csv "$dp0\site-contenttypes.csv" -Delimiter ";" -Encoding Default
@@ -11,7 +11,9 @@ $views = Import-Csv "$dp0\site-views.csv" -Delimiter ";" -Encoding Default
 Write-Progress -Id 1 -Activity "Creating Site-Columns" -PercentComplete (1 / 4 * 100)
 $i = 1
 foreach ($column in $siteColumns) {
-    Write-Progress -Id 2 -ParentId 1 -Activity "Creating Column '$($column.DisplayName)'" -PercentComplete ($i / $($siteColumns.Count) * 100)
+    if ($siteColumns.Count -gt 0) {
+        Write-Progress -Id 2 -ParentId 1 -Activity "Creating Column '$($column.DisplayName)'" -PercentComplete ($i / $($siteColumns.Count) * 100)
+    }
 
     $requiredSwitch = [System.Convert]::ToBoolean($column.Required)
 
@@ -40,7 +42,9 @@ Write-Progress -Id 2 -ParentId 1 -Completed -Activity "Done"
 Write-Progress -Id 1 -Activity "Creating Site-ContentTypes" -PercentComplete (2 / 4 * 100)
 $i = 1
 foreach ($contentType in $siteContenTypes) {
-    Write-Progress -Id 2 -ParentId 1 -Activity "Creating ContentType '$($contentType.Name)'" -PercentComplete ($i / $($siteContenTypes.Count) * 100)
+    if ($siteContenTypes.Count -gt 0) {
+        Write-Progress -Id 2 -ParentId 1 -Activity "Creating ContentType '$($contentType.Name)'" -PercentComplete ($i / $($siteContenTypes.Count) * 100)
+    }
 
     $parentCT = Get-PnPContentType -Identity $contentType.ParentName
     $newCT = Add-PnPContentType -Name $contentType.Name -Group $groupName -ParentContentType $parentCT
@@ -55,7 +59,9 @@ Write-Progress -Id 2 -ParentId 1 -Completed -Activity "Done"
 Write-Progress -Id 1 -Activity "Creating Lists and Libraries" -PercentComplete (3 / 4 * 100)
 $i = 1
 foreach ($list in $lists) {
-    Write-Progress -Id 2 -ParentId 1 -Activity "Creating List/Library '$($list.Name)'" -PercentComplete ($i / $($lists.Count) * 100)
+    if ($lists.Count -gt 0) {
+        Write-Progress -Id 2 -ParentId 1 -Activity "Creating List/Library '$($list.Name)'" -PercentComplete ($i / $($lists.Count) * 100)
+    }
     
     $ctSwitch = ![string]::IsNullOrEmpty($list.ContentTypes)
     $qlSwitch = [System.Convert]::ToBoolean($list.OnQuickLaunch)
@@ -79,7 +85,9 @@ Write-Progress -Id 2 -ParentId 1 -Completed -Activity "Done"
 Write-Progress -Id 1 -Activity "Creating Views" -PercentComplete (4 / 4 * 100)
 $i = 1
 foreach ($view in $views) {
-    Write-Progress -Id 2 -ParentId 1 -Activity "Creating view '$($view.Name)'" -PercentComplete ($i / $($views.Count) * 100)
+    if ($views.Count -gt 0) {
+        Write-Progress -Id 2 -ParentId 1 -Activity "Creating view '$($view.Name)'" -PercentComplete ($i / $($views.Count) * 100)
+    }
 
     $fields = $view.Fields.Split(';')
     $newView = Get-PnPView -List $view.List -Identity $view.Name
