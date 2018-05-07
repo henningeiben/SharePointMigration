@@ -1,0 +1,21 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "PowerShell",
+            "request": "launch",
+            "name": "delete-structure w/Args Prompt",
+            "script": "${workspaceRoot}\\delete-structure.ps1",
+            "args": ["-webUrl <%= $PLASTER_PARAM_SiteUrl %> -targetDeployment 000"],
+            "cwd": "${workspaceRoot}"
+        },
+        {
+            "type": "PowerShell",
+            "request": "launch",
+            "name": "create-structure",
+            "script": "${workspaceRoot}\\create-structure.ps1",
+            "args": ["-webUrl <%= $PLASTER_PARAM_SiteUrl %>"],
+            "cwd": "${workspaceRoot}"
+        },
+    ]
+}

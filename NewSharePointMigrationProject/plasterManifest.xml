@@ -33,6 +33,8 @@
     <file source="site-lists.csv" destination="migrations/001/site-lists.csv" />
     <file source="site-contenttypes.csv" destination="migrations/001/site-contenttypes.csv" />
     <file source="site-views.csv" destination="migrations/001/site-views.csv" />
+    <templateFile source="launch.json" destination=".vscode/launch.json" />
+    <file source="settings.json" destination=".vscode/settings.json" />
     <message>Your new SharePoint Project is ready - build awesomeness!</message>
   </content>
 </plasterManifest>
