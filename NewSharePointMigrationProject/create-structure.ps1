@@ -21,7 +21,7 @@ Import-Module "$dp0\migrations\common-functions.psm1"
     if ($PLASTER_PARAM_Edition -eq 'Online')
     {
 @'
-Import-Module "SharePointPnPPowerShellOnline"
+Import-Module "SharePointPnPPowerShellOnline" 3>$null
 ### Authentication
 Connect-PnPOnline -Url $webUrl -UseWebLogin        
 '@
@@ -29,7 +29,7 @@ Connect-PnPOnline -Url $webUrl -UseWebLogin
     else 
     {
 @'
-Import-Module "SharePointPnPPowerShell2013"
+Import-Module "SharePointPnPPowerShell2013" 3>$null
 ### Authentication
 $ctx = New-Object Microsoft.SharePoint.Client.ClientContext($webUrl)
 Connect-PnPOnline -Url $webUrl -CurrentCredentials
