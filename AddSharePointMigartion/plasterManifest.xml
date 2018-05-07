@@ -1,7 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<plasterManifest
-  schemaVersion="1.1"
-  templateType="Item" xmlns="http://www.microsoft.com/schemas/PowerShell/Plaster/v1">
+<plasterManifest schemaVersion="1.1" templateType="Item" 
+  xmlns="http://www.microsoft.com/schemas/PowerShell/Plaster/v1">
   <metadata>
     <name>AddSharePointMigration</name>
     <id>a8fba89c-69a9-4536-8032-d42f269ca24d</id>
@@ -11,6 +10,11 @@
     <author>Henning Eiben</author>
     <tags>SharePoint</tags>
   </metadata>
-  <parameters></parameters>
-  <content></content>
+  <parameters>
+    <parameter name='Version' type='text' prompt='Enter the new migration version (number)'/>
+  </parameters>
+  <content>
+    <file source="down.ps1" destination="migrations/$PLASTER_PARAM_Version/down.ps1" />
+    <file source="up.ps1" destination="migrations/$PLASTER_PARAM_Version/up.ps1" openInEditor="true" />
+  </content>
 </plasterManifest>
