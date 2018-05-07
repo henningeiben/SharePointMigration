@@ -23,7 +23,7 @@ Import-Module "$dp0\migrations\common-functions.psm1"
 @'
 Import-Module "SharePointPnPPowerShellOnline"
 ### Authentication
-Connect-PnPOnline -Url \$webUrl -UseWebLogin        
+Connect-PnPOnline -Url $webUrl -UseWebLogin        
 '@
     }
     else 

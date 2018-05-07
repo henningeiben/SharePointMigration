@@ -21,7 +21,7 @@
   </parameters>
   <content>
     <templateFile source="create-structure.ps1" destination=""/>
-    <file source="delete-structure.ps1" destination=""/>
+    <templateFile source="delete-structure.ps1" destination=""/>
     <file source="$PLASTER_PARAM_Edition/Microsoft.SharePoint.Client.dll" destination="Microsoft.SharePoint.Client.dll"/>
     <file source="$PLASTER_PARAM_Edition/Microsoft.SharePoint.Client.Runtime.dll" destination="Microsoft.SharePoint.Client.Runtime.dll"/>
     <file source="common-functions.psm1" destination="migrations/common-functions.psm1" />

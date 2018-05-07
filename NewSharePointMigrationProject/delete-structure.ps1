@@ -4,29 +4,39 @@ param (
 )
 
 ### Config-Section
-#$webUrl = "http://sp2013.develop-busitec.de/projects/stw-ms/procurement/"
+#$webUrl = "<%= $PLASTER_PARAM_SiteUrl %>"
 
 ### Loading Libraries
 $script:0 = $myInvocation.MyCommand.Definition
 $dp0 = Split-Path -Parent -Path $script:0
 
+
 # assume DLLs are in the same folder as the script
 Add-Type -Path "$dp0\Microsoft.SharePoint.Client.Runtime.dll"
 Add-Type -Path "$dp0\Microsoft.SharePoint.Client.dll"
 
-Import-Module "$dp0\migrations\nintex-functions-onprem.psm1"
+Import-Module "$dp0\migrations\nintex-functions.psm1"
 Import-Module "$dp0\migrations\common-functions.psm1"
 
-# ## SharePoint 2013
-# Import-Module "SharePointPnPPowerShell2013"
-# ### Authentication
-# $ctx = New-Object Microsoft.SharePoint.Client.ClientContext($webUrl)
-# Connect-PnPOnline -Url $webUrl -CurrentCredentials
-
-## SharePoint Online
+<%
+    if ($PLASTER_PARAM_Edition -eq 'Online')
+    {
+@'
 Import-Module "SharePointPnPPowerShellOnline"
 ### Authentication
-Connect-PnPOnline -Url $webUrl -UseWebLogin
+Connect-PnPOnline -Url $webUrl -UseWebLogin        
+'@
+    }
+    else 
+    {
+@'
+Import-Module "SharePointPnPPowerShell2013"
+### Authentication
+$ctx = New-Object Microsoft.SharePoint.Client.ClientContext($webUrl)
+Connect-PnPOnline -Url $webUrl -CurrentCredentials
+'@
+    }
+%>
 
 $allScripts = Get-ChildItem -Path "$dp0\migrations\" -Directory | Sort-Object -Descending
 
@@ -35,7 +45,7 @@ foreach ($currentScript in $allScripts) {
     $previousDeployment = "{0:000}" -f [math]::Max($currentDeployment - 1, 0);
 
     Invoke-Migration `
-        -fieldName "btecQM_Deployment_Version" `
+        -fieldName "<%= $PLASTER_PARAM_FieldName %>" `
         -currentDeployment $currentDeployment `
         -targetDeployment $targetDeployment `
         -previousDeployment $previousDeployment `
