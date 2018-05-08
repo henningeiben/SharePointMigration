@@ -554,7 +554,7 @@ function importNintexFormO365() {
         $response = $client.PutAsync($importFormUri, $saveContent).Result
         #If we're successful, write an export file from the body of the response.
         if ($response.IsSuccessStatusCode -eq $true) {
-            Write-Host "Form was successfully imported!"
+            Write-Verbose "Form was successfully imported!"
         }
         else {
             Write-Host "Error while processing the REST-API call to Nintex!"
@@ -691,7 +691,7 @@ function publishNintexFormO365() {
         $response = $client.PostAsync($publishFormUri, $stringContent).Result
         #If we're successful, write an export file from the body of the response.
         if ($response.IsSuccessStatusCode -eq $true) {
-            Write-Host "Form has been published!"
+            Write-Verbose "Form has been published!"
         }
         else {
             Write-Host "Error while processing the REST-API call to Nintex!"
