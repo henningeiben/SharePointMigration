@@ -86,11 +86,11 @@ Write-Progress -Id 1 -Activity "Creating Views" -PercentComplete (4 / 4 * 100)
 $i = 1
 foreach ($view in $views) {
     if ($views.Count -gt 0) {
-        Write-Progress -Id 2 -ParentId 1 -Activity "Creating view '$($view.Name)'" -PercentComplete ($i / $($views.Count) * 100)
+        Write-Progress -Id 2 -ParentId 1 -Activity "Creating view '$($view.Title)'" -PercentComplete ($i / $($views.Count) * 100)
     }
 
     $fields = $view.Fields.Split(';')
-    $newView = Get-PnPView -List $view.List -Identity $view.Name
+    $newView = Get-PnPView -List $view.List -Identity $view.Name -ErrorAction SilentlyContinue
     if (!$newView) {
         $newView = Add-PnPView -List $view.List -Title $view.Name -Fields $fields
     }
@@ -99,18 +99,17 @@ foreach ($view in $views) {
         foreach ($field in $fields) {
             $newView.ViewFields.Add($field)
         }
-        $newView.Update()
     }
-    if (![string]::IsNullOrEmpty($view.Grouping)) {
-        $newView.ViewQuery = "<GroupBy Collapse='False' GroupLimit='300'><FieldRef Name='$($view.Grouping)' /></GroupBy>"
-        $newView.Aggregations = "off"
-        $newView.Update()
+    $newView.Title = $view.Title
+
+    if (![string]::IsNullOrEmpty($view.Query)) {
+        $newView.ViewQuery = $view.Query
     }
-    if ($newView.Context.HasPendingRequest) {
-        $newView.Context.ExecuteQuery()
-    }
+
+    $newView.Update()
     $i++
 }
+Execute-PnPQuery
 Write-Progress -Id 2 -ParentId 1 -Completed -Activity "Done"
 
 
