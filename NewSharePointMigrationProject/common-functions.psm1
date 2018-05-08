@@ -54,7 +54,7 @@ function Invoke-Migration() {
                 $web.Update()
             }
             elseif ($down -and $previousDeployment -le $targetDeployment) {
-                Write-Verbose "Target-Deployment reached, not retracting $currentDeployment"        
+                Write-Host "Target-Deployment reached, not retracting $currentDeployment"        
             }
             else {
                 Write-Host "Deployment $currentDeployment already applied; skipping"
@@ -75,7 +75,7 @@ function Invoke-Migration() {
             $ctx.ExecuteQuery()
         }
 
-        Write-Host "Done running Deployment $currentDeployment"
+        Write-Host "Done processing Deployment $currentDeployment"
     }
 }
 
