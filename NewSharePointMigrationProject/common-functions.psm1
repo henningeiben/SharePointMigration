@@ -44,7 +44,9 @@ function Invoke-Migration() {
             $deployVersion = $noDeployment
         }
 
+        Write-Host "----- ----- -----"
         Write-Host "Current Deployment: $deployVersion"
+        Write-Host "Processing Deployment: $currentDeployment"
 
         if ($deployVersion -ge $currentDeployment) {
             if ($down -and $currentDeployment -gt $targetDeployment) {
