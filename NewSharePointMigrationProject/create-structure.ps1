@@ -1,6 +1,30 @@
+<#
+.SYNOPSIS
+    Erstellt eine Infrastruktur auf der Basis von Migrationen
+.DESCRIPTION
+    TBD
+.PARAMETER webUrl
+    Die URL an die die Migration angewendet werden soll
+.PARAMETER targetDeployment
+    bis zu welcher Migration soll die Infrastruktur erstellt werden
+.PARAMETER username
+    Optional: Benutzername zur Authentifizierung an der WebURL
+.PARAMETER password
+    Optional: Passwort zur Authentifizierung an der WebURL als SecureString
+.EXAMPLE
+    Create-Structure -webUrl https://acme.local.com/sites/foo
+.EXAMPLE
+    Create-Structure -webUrl https://acme.local.com/sites/foo -username bigboss -password ('password' | ConvertTo-SecureString -AsPlainText -Force)
+#>
 param (
+[parameter(Mandatory = $true)]
+    [string]$webUrl,
+    [parameter(Mandatory = $false)]
     [string]$targetDeployment,
-    [string]$webUrl
+    [parameter(Mandatory = $false)]
+    [string]$username,
+    [parameter(Mandatory = $false)]
+    [SecureString]$password
 )
 
 ### Config-Section
@@ -17,13 +41,20 @@ Add-Type -Path "$dp0\Microsoft.SharePoint.Client.dll"
 Import-Module "$dp0\migrations\nintex-functions.psm1"
 Import-Module "$dp0\migrations\common-functions.psm1"
 
+try {
 <%
     if ($PLASTER_PARAM_Edition -eq 'Online')
     {
 @'
 Import-Module "SharePointPnPPowerShellOnline" 3>$null
 ### Authentication
-Connect-PnPOnline -Url $webUrl -UseWebLogin        
+if ($username -and $password) {
+    $cred = New-Object System.Management.Automation.PSCredential -argumentlist $username, $password
+    Connect-PnPOnline -Url $webUrl -Credentials $cred        
+}
+else {
+    Connect-PnPOnline -Url $webUrl -UseWebLogin
+}
 '@
     }
     else 
@@ -32,10 +63,21 @@ Connect-PnPOnline -Url $webUrl -UseWebLogin
 Import-Module "SharePointPnPPowerShell2013" 3>$null
 ### Authentication
 $ctx = New-Object Microsoft.SharePoint.Client.ClientContext($webUrl)
-Connect-PnPOnline -Url $webUrl -CurrentCredentials
+if ($username -and $password) {
+    $cred = New-Object System.Management.Automation.PSCredential -argumentlist $username, $password
+    Connect-PnPOnline -Url $webUrl -Credentials $cred        
+}
+else {
+    Connect-PnPOnline -Url $webUrl -CurrentCredentials
+}
 '@
     }
 %>
+}
+catch {
+    throw $_
+}
+
 
 $allScripts = Get-ChildItem -Path "$dp0\migrations\" -Directory
 
