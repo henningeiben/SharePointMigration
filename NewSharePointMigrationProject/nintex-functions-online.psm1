@@ -1,14 +1,14 @@
-function export-NintexWorkflowO365() {
+function Export-NintexWorkflowO365() {
     <#
     .SYNOPSIS
-    Funktion fï¿½r das exportieren eines Nintex Workflow in einer Office 365 Umgebung.
+    Funktion f�r das exportieren eines Nintex Workflow in einer Office 365 Umgebung.
     .DESCRIPTION
     Die Funktion spricht eine eigene Nintex API an um einen Workflow zu exportieren.
     https://help.nintex.com/en-us/sdks/sdko365/Operational/SDK_NWO_OPS_ExportWorkflow.htm
     .PARAMETER apiKey
-    APIKEY fï¿½r die Nintex Office 365 API
+    APIKEY f�r die Nintex Office 365 API
     .PARAMETER apiRootUrl
-    ROOT URL fï¿½r die Nintex Office 365 API    
+    ROOT URL f�r die Nintex Office 365 API    
     .PARAMETER spSiteUrl
     URL zur SharePoint Seite
     .PARAMETER sourceWorkflowId
@@ -31,28 +31,8 @@ function export-NintexWorkflowO365() {
     )
     process
     {
-        Add-Type -AssemblyName "System.Net.Http"
-        #Step 1: create authorization tooken
-        # Create a new SharePointOnlineCredentials object, using the specified credential.
-        # $credential = Get-Credential
-        # $SPOCred = New-Object -TypeName Microsoft.SharePoint.Client.SharePointOnlineCredentials -ArgumentList $credential.UserName, $credential.Password 
-        # Return the authentication cookie from the SharePointOnlineCredentials object, 
-        # using the specified SharePoint site.
-        $cookie = $SPOCred.GetAuthenticationCookie($spSiteUrl)
-        #Step 2: create request
-        #Create a new HTTP client and configure its base address.
-        $client = New-Object System.Net.Http.HttpClient
-        $client.BaseAddress = $spSiteUrl
-        #Add common request headers for the REST API to the HTTP client.
-        $header = New-Object System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json")
-        $client.DefaultRequestHeaders.Accept.Add($Header)
-        $client.DefaultRequestHeaders.Add("Api-Key", $apiKey)
-        #Get the SharePoint authorization cookie to be used by the HTTP client
-        #for the request, and use it for the Authorization request header.
-        if ($cookie) {
-            $authHeader = New-Object System.Net.Http.Headers.AuthenticationHeaderValue("cookie", [string]::Format("{0} {1}", $spSiteUrl, $cookie))
-            $client.DefaultRequestHeaders.Authorization = $authHeader
-        }
+        $client = New-HttpClient -apiKey $apiKey -spSiteUrl $spSiteUrl
+        
         #If we're at this point, we're ready to make our request.
         #Note that we're making this call synchronously - you can call the REST API
         #asynchronously, as needed.
@@ -70,22 +50,23 @@ function export-NintexWorkflowO365() {
         }
     }
 }
-function importIntoNewNintexWorkflowO365() {
+
+function Import-NewNintexWorkflowO365() {
     <#
     .SYNOPSIS
-    Funktion fï¿½r das importieren eines neues Nintex Workflows in einer Office 365 Umgebung.
+    Funktion f�r das importieren eines neues Nintex Workflows in einer Office 365 Umgebung.
     .DESCRIPTION
     Die Funktion spricht eine eigene Nintex API an um einen Workflows zu importieren.
-    Der Process importiert, speichert, und verï¿½ffentlicht das Formular.
+    Der Process importiert, speichert, und ver�ffentlicht das Formular.
     https://help.nintex.com/en-us/sdks/sdko365/Default.htm#Operational/SDK_NWO_OPS_ImportNewWorkflow.htm%3FTocPath%3DNintex%2520Office%2520365%2520API%7CNintex%2520Workflow%2520for%2520Office%2520365%2520REST%2520API%7CGuide%7C_____2
     .PARAMETER apiKey
-    APIKEY fï¿½r die Nintex Office 365 API
+    APIKEY f�r die Nintex Office 365 API
     .PARAMETER apiRootUrl
-    ROOT URL fï¿½r die Nintex Office 365 API    
+    ROOT URL f�r die Nintex Office 365 API    
     .PARAMETER spSiteUrl
     URL zur SharePoint Seite
     .PARAMETER listTitle
-    List ID wo das Formular verï¿½ffentlicht werden soll
+    List ID wo das Formular ver�ffentlicht werden soll
     .PARAMETER importPath
     Pfad wo das zu speichernde Workflows liegt
     .EXAMPLE
@@ -102,28 +83,8 @@ function importIntoNewNintexWorkflowO365() {
     )
     process 
     {
-        Add-Type -AssemblyName "System.Net.Http"
-        #Step 1: create authorization tooken
-        # Create a new SharePointOnlineCredentials object, using the specified credential.
-        $credential = Get-Credential
-        $SPOCred = New-Object -TypeName Microsoft.SharePoint.Client.SharePointOnlineCredentials -ArgumentList $credential.UserName, $credential.Password 
-        # Return the authentication cookie from the SharePointOnlineCredentials object, 
-        # using the specified SharePoint site.
-        $cookie = $SPOCred.GetAuthenticationCookie($spSiteUrl)
-        #Step 2: create request
-        #Create a new HTTP client and configure its base address.
-        $client = New-Object System.Net.Http.HttpClient
-        $client.BaseAddress = $spSiteUrl
-        #Add common request headers for the REST API to the HTTP client.
-        $header = New-Object System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json")
-        $client.DefaultRequestHeaders.Accept.Add($Header)
-        $client.DefaultRequestHeaders.Add("Api-Key", $apiKey)
-        #Get the SharePoint authorization cookie to be used by the HTTP client
-        #for the request, and use it for the Authorization request header.
-        if ($cookie) {
-            $authHeader = New-Object System.Net.Http.Headers.AuthenticationHeaderValue("cookie", [string]::Format("{0} {1}", $spSiteUrl, $cookie))
-            $client.DefaultRequestHeaders.Authorization = $authHeader
-        }
+        $client = New-HttpClient -apiKey $apiKey -spSiteUrl $spSiteUrl
+        
         #Read the file.
         $exportFileContents = [IO.File]::ReadAllBytes($importPath)
         $saveContent = New-Object System.Net.Http.ByteArrayContent($exportFileContents, 0, $exportFileContents.Length)
@@ -142,26 +103,27 @@ function importIntoNewNintexWorkflowO365() {
         }
     }
 }
-function importIntoExistingNintexWorkflowO365() {
+
+function Import-ExistingNintexWorkflowO365() {
     <#
     .SYNOPSIS
-    Funktion fï¿½r das importieren eines bestehenden Nintex Workflows in einer Office 365 Umgebung.
+    Funktion f�r das importieren eines bestehenden Nintex Workflows in einer Office 365 Umgebung.
     .DESCRIPTION
     Die Funktion spricht eine eigene Nintex API an um einen Workflows zu importieren.
-    Der Process importiert, speichert, und verï¿½ffentlicht das Workflow.
+    Der Process importiert, speichert, und ver�ffentlicht das Workflow.
     https://help.nintex.com/en-us/sdks/sdko365/Default.htm#Operational/SDK_NWO_OPS_ImportOldWorkflow.htm%3FTocPath%3DNintex%2520Office%2520365%2520API%7CNintex%2520Workflow%2520for%2520Office%2520365%2520REST%2520API%7CGuide%7C_____3
     .PARAMETER apiKey
-    APIKEY fï¿½r die Nintex Office 365 API
+    APIKEY f�r die Nintex Office 365 API
     .PARAMETER apiRootUrl
-    ROOT URL fï¿½r die Nintex Office 365 API    
+    ROOT URL f�r die Nintex Office 365 API    
     .PARAMETER spSiteUrl
     URL zur SharePoint Seite
     .PARAMETER listTitle
-    List ID wo das Workflow verï¿½ffentlicht werden soll
+    List ID wo das Workflow ver�ffentlicht werden soll
     .PARAMETER importPath
     Pfad wo das zu speichernde Workflows liegt
     .PARAMETER importPath
-    Workflow ID wo der Workflow verï¿½ffentlicht werden soll
+    Workflow ID wo der Workflow ver�ffentlicht werden soll
     .EXAMPLE
     importIntoExistingNintexWorkflowO365 -apiKey "6d71f59244f74ba78875768b9c1c9ef6" -apiRootUrl "https://busitec.nintexo365.com" -spSiteUrl "https://busitec.sharepoint.com/sites/dev-stwms-onboarding" -listId "1b0fbebf-392d-4cde-8351-f24a88436459" -$workflowId "1b0fbebf-392d-4cde-8351-f24a88436459" -importPath "C:\Test\Test.nwf"
     #>
@@ -177,28 +139,8 @@ function importIntoExistingNintexWorkflowO365() {
     )
     process
     {
-        Add-Type -AssemblyName "System.Net.Http"
-        #Step 1: create authorization tooken
-        # Create a new SharePointOnlineCredentials object, using the specified credential.
-        $credential = Get-Credential
-        $SPOCred = New-Object -TypeName Microsoft.SharePoint.Client.SharePointOnlineCredentials -ArgumentList $credential.UserName, $credential.Password 
-        # Return the authentication cookie from the SharePointOnlineCredentials object, 
-        # using the specified SharePoint site.
-        $cookie = $SPOCred.GetAuthenticationCookie($spSiteUrl)
-        #Step 2: create request
-        #Create a new HTTP client and configure its base address.
-        $client = New-Object System.Net.Http.HttpClient
-        $client.BaseAddress = $spSiteUrl
-        #Add common request headers for the REST API to the HTTP client.
-        $header = New-Object System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json")
-        $client.DefaultRequestHeaders.Accept.Add($Header)
-        $client.DefaultRequestHeaders.Add("Api-Key", $apiKey)
-        #Get the SharePoint authorization cookie to be used by the HTTP client
-        #for the request, and use it for the Authorization request header.
-        if ($cookie) {
-            $authHeader = New-Object System.Net.Http.Headers.AuthenticationHeaderValue("cookie", [string]::Format("{0} {1}", $spSiteUrl, $cookie))
-            $client.DefaultRequestHeaders.Authorization = $authHeader
-        }
+        $client = New-HttpClient -apiKey $apiKey -spSiteUrl $spSiteUrl
+        
         #Read the file.
         $exportFileContents = [IO.File]::ReadAllBytes($importPath)
         $saveContent = New-Object System.Net.Http.ByteArrayContent($exportFileContents, 0, $exportFileContents.Length)
@@ -216,21 +158,22 @@ function importIntoExistingNintexWorkflowO365() {
         }
     }
 }
-function saveNintexWorkflowO365() {
+
+function Save-NintexWorkflowO365() {
     <#
     .SYNOPSIS
-    Funktion fï¿½r das speichern eines Nintex Workflows in einer Office 365 Umgebung.
+    Funktion f�r das speichern eines Nintex Workflows in einer Office 365 Umgebung.
     .DESCRIPTION
     Die Funktion spricht eine eigene Nintex API an um einen Workflows zu speichern.
     https://help.nintex.com/en-us/sdks/sdko365/Default.htm#Operational/SDK_NWO_OPS_SaveWorkflow.htm%3FTocPath%3DNintex%2520Office%2520365%2520API%7CNintex%2520Workflow%2520for%2520Office%2520365%2520REST%2520API%7CGuide%7C_____4
     .PARAMETER apiKey
-    APIKEY fï¿½r die Nintex Office 365 API
+    APIKEY f�r die Nintex Office 365 API
     .PARAMETER apiRootUrl
-    ROOT URL fï¿½r die Nintex Office 365 API    
+    ROOT URL f�r die Nintex Office 365 API    
     .PARAMETER spSiteUrl
     URL zur SharePoint Seite
     .PARAMETER listId
-    List ID wo das Workflows verï¿½ffentlicht werden soll
+    List ID wo das Workflows ver�ffentlicht werden soll
     .PARAMETER workflowId
     Pfad wo das zu speichernde Workflows liegt
     .EXAMPLE
@@ -247,28 +190,8 @@ function saveNintexWorkflowO365() {
     )
     process 
     {
-        Add-Type -AssemblyName "System.Net.Http"
-        #Step 1: create authorization tooken
-        # Create a new SharePointOnlineCredentials object, using the specified credential.
-        $credential = Get-Credential
-        $SPOCred = New-Object -TypeName Microsoft.SharePoint.Client.SharePointOnlineCredentials -ArgumentList $credential.UserName, $credential.Password 
-        # Return the authentication cookie from the SharePointOnlineCredentials object, 
-        # using the specified SharePoint site.
-        $cookie = $SPOCred.GetAuthenticationCookie($spSiteUrl)
-        #Step 2: create request
-        #Create a new HTTP client and configure its base address.
-        $client = New-Object System.Net.Http.HttpClient
-        $client.BaseAddress = $spSiteUrl
-        #Add common request headers for the REST API to the HTTP client.
-        $header = New-Object System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json")
-        $client.DefaultRequestHeaders.Accept.Add($Header)
-        $client.DefaultRequestHeaders.Add("Api-Key", $apiKey)
-        #Get the SharePoint authorization cookie to be used by the HTTP client
-        #for the request, and use it for the Authorization request header.
-        if ($cookie) {
-            $authHeader = New-Object System.Net.Http.Headers.AuthenticationHeaderValue("cookie", [string]::Format("{0} {1}", $spSiteUrl, $cookie))
-            $client.DefaultRequestHeaders.Authorization = $authHeader
-        }
+        $client = New-HttpClient -apiKey $apiKey -spSiteUrl $spSiteUrl
+        
         #Read the file.
         $exportFileContents = [IO.File]::ReadAllBytes($importPath);
         $saveContent = New-Object System.Net.Http.ByteArrayContent -ArgumentList @(,$exportFileContents)
@@ -286,21 +209,22 @@ function saveNintexWorkflowO365() {
         }
     }
 }
-function publishNintexWorkflowO365() {
+
+function Publish-NintexWorkflowO365() {
     <#
     .SYNOPSIS
-    Funktion fï¿½r das verï¿½ffentlichen eines Nintex Workflows in einer Office 365 Umgebung.
+    Funktion f�r das ver�ffentlichen eines Nintex Workflows in einer Office 365 Umgebung.
     .DESCRIPTION
-    Die Funktion spricht eine eigene Nintex API an um einen Workflows zu verï¿½ffentlichen.
+    Die Funktion spricht eine eigene Nintex API an um einen Workflows zu ver�ffentlichen.
     https://help.nintex.com/en-us/sdks/sdko365/Default.htm#Operational/SDK_NWO_OPS_PublishWorkflow.htm%3FTocPath%3DNintex%2520Office%2520365%2520API%7CNintex%2520Workflow%2520for%2520Office%2520365%2520REST%2520API%7CGuide%7C_____5
     .PARAMETER apiKey
-    APIKEY fï¿½r die Nintex Office 365 API
+    APIKEY f�r die Nintex Office 365 API
     .PARAMETER apiRootUrl
-    ROOT URL fï¿½r die Nintex Office 365 API    
+    ROOT URL f�r die Nintex Office 365 API    
     .PARAMETER spSiteUrl
     URL zur SharePoint Seite
     .PARAMETER workflowId
-    List ID wo das Workflows verï¿½ffentlicht werden soll
+    List ID wo das Workflows ver�ffentlicht werden soll
     .EXAMPLE
     publishNintexWorkflowO365 -apiKey "6d71f59244f74ba78875768b9c1c9ef6" -apiRootUrl "https://busitec.nintexo365.com" -spSiteUrl "https://busitec.sharepoint.com/sites/dev-stwms-onboarding" -workflowId "1b0fbebf-392d-4cde-8351-f24a88436459"
     #>
@@ -314,28 +238,8 @@ function publishNintexWorkflowO365() {
     )
     process 
     {
-        Add-Type -AssemblyName "System.Net.Http"
-        #Step 1: create authorization tooken
-        # Create a new SharePointOnlineCredentials object, using the specified credential.
-        $credential = Get-Credential
-        $SPOCred = New-Object -TypeName Microsoft.SharePoint.Client.SharePointOnlineCredentials -ArgumentList $credential.UserName, $credential.Password 
-        # Return the authentication cookie from the SharePointOnlineCredentials object, 
-        # using the specified SharePoint site.
-        $cookie = $SPOCred.GetAuthenticationCookie($spSiteUrl)
-        #Step 2: create request
-        #Create a new HTTP client and configure its base address.
-        $client = New-Object System.Net.Http.HttpClient
-        $client.BaseAddress = $spSiteUrl
-        #Add common request headers for the REST API to the HTTP client.
-        $header = New-Object System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json")
-        $client.DefaultRequestHeaders.Accept.Add($Header)
-        $client.DefaultRequestHeaders.Add("Api-Key", $apiKey)
-        #Get the SharePoint authorization cookie to be used by the HTTP client
-        #for the request, and use it for the Authorization request header.
-        if ($cookie) {
-            $authHeader = New-Object System.Net.Http.Headers.AuthenticationHeaderValue("cookie", [string]::Format("{0} {1}", $spSiteUrl, $cookie))
-            $client.DefaultRequestHeaders.Authorization = $authHeader
-        }
+        $client = New-HttpClient -apiKey $apiKey -spSiteUrl $spSiteUrl
+        
         #If we're at this point, we're ready to make our request.
         #Note that we're making this call synchronously - you can call the REST API
         #asynchronously, as needed.
@@ -344,28 +248,29 @@ function publishNintexWorkflowO365() {
         $response = $client.PostAsync($publishWorkflowUri, $stringContent).Result
         #If we're successful, write an export file from the body of the response.
         if ($response.IsSuccessStatusCode -eq $true) {
-            Write-Host "Workflow wurde erfolgreich verï¿½ffentlicht!"
+            Write-Host "Workflow wurde erfolgreich ver�ffentlicht!"
         }
         else {
             Write-Host "Fehler in der Verarbeitung des REST-API-Aufrufes!"
         }
     }
 }
-function assignNintexWorkflowUseO365() {
+
+function Register-NintexWorkflowUseO365() {
     <#
     .SYNOPSIS
-    Funktion fï¿½r das zuweisen (Umgebung) eines Nintex Workflows in einer Office 365 Umgebung.
+    Funktion f�r das zuweisen (Umgebung) eines Nintex Workflows in einer Office 365 Umgebung.
     .DESCRIPTION
     Die Funktion spricht eine eigene Nintex API an um einen Workflow zur Produktiven oder Development Umgebung zuzuweisen.
     https://help.nintex.com/en-us/sdks/sdko365/Default.htm#Operational/SDK_NWO_OPS_AssignedUse.htm%3FTocPath%3DNintex%2520Office%2520365%2520API%7CNintex%2520Workflow%2520for%2520Office%2520365%2520REST%2520API%7CGuide%7C_____6
     .PARAMETER apiKey
-    APIKEY fï¿½r die Nintex Office 365 API
+    APIKEY f�r die Nintex Office 365 API
     .PARAMETER apiRootUrl
-    ROOT URL fï¿½r die Nintex Office 365 API    
+    ROOT URL f�r die Nintex Office 365 API    
     .PARAMETER spSiteUrl
     URL zur SharePoint Seite
     .PARAMETER workflowId
-    Worfklow ID wo das Formular verï¿½ffentlicht werden soll
+    Worfklow ID wo das Formular ver�ffentlicht werden soll
     .PARAMETER assigned
     Umgebung wo der Worklflow zugewiesen soll Production oder Development
     .EXAMPLE
@@ -382,28 +287,8 @@ function assignNintexWorkflowUseO365() {
     )
     process 
     {
-        Add-Type -AssemblyName "System.Net.Http"
-        #Step 1: create authorization tooken
-        # Create a new SharePointOnlineCredentials object, using the specified credential.
-        $credential = Get-Credential
-        $SPOCred = New-Object -TypeName Microsoft.SharePoint.Client.SharePointOnlineCredentials -ArgumentList $credential.UserName, $credential.Password 
-        # Return the authentication cookie from the SharePointOnlineCredentials object, 
-        # using the specified SharePoint site.
-        $cookie = $SPOCred.GetAuthenticationCookie($spSiteUrl)
-        #Step 2: create request
-        #Create a new HTTP client and configure its base address.
-        $client = New-Object System.Net.Http.HttpClient
-        $client.BaseAddress = $spSiteUrl
-        #Add common request headers for the REST API to the HTTP client.
-        $header = New-Object System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json")
-        $client.DefaultRequestHeaders.Accept.Add($Header)
-        $client.DefaultRequestHeaders.Add("Api-Key", $apiKey)
-        #Get the SharePoint authorization cookie to be used by the HTTP client
-        #for the request, and use it for the Authorization request header.
-        if ($cookie) {
-            $authHeader = New-Object System.Net.Http.Headers.AuthenticationHeaderValue("cookie", [string]::Format("{0} {1}", $spSiteUrl, $cookie))
-            $client.DefaultRequestHeaders.Authorization = $authHeader
-        }
+        $client = New-HttpClient -apiKey $apiKey -spSiteUrl $spSiteUrl
+        
         #The requestbody
         $requestBody ="{\value\: \"+ $assigned + "\}"
         #If we're at this point, we're ready to make our request.
@@ -420,17 +305,18 @@ function assignNintexWorkflowUseO365() {
         }
     }
 }
-function exportNintexFormO365() {
+
+function Export-NintexFormO365() {
     <#
     .SYNOPSIS
-    Funktion fï¿½r das exportieren eines Nintex Forms in einer Office 365 Umgebung.
+    Funktion f�r das exportieren eines Nintex Forms in einer Office 365 Umgebung.
     .DESCRIPTION
     Die Funktion spricht eine eigene Nintex API an um einen Form zu exportieren.
     https://help.nintex.com/en-us/sdks/sdko365/Default.htm#FormSDK/Topics/SDK_NFO_PRC_ExportForm.htm%3FTocPath%3DNintex%2520Office%2520365%2520API%7CNintex%2520Forms%2520for%2520Office%2520365%2520REST%2520API%7CGuide%7C_____1
     .PARAMETER apiKey
-    APIKEY fï¿½r die Nintex Office 365 API
+    APIKEY f�r die Nintex Office 365 API
     .PARAMETER apiRootUrl
-    ROOT URL fï¿½r die Nintex Office 365 API    
+    ROOT URL f�r die Nintex Office 365 API    
     .PARAMETER spSiteUrl
     URL zur SharePoint Seite
     .PARAMETER listId
@@ -452,26 +338,8 @@ function exportNintexFormO365() {
     )
     process 
     {
-        Add-Type -AssemblyName "System.Net.Http"
-        #Step 1: create authorization tooken
-        # Create a new SharePointOnlineCredentials object, using the specified credential.
-        $credential = Get-Credential
-        $SPOCred = New-Object -TypeName Microsoft.SharePoint.Client.SharePointOnlineCredentials -ArgumentList $credential.UserName, $credential.Password 
-        # Return the authentication cookie from the SharePointOnlineCredentials object, 
-        # using the specified SharePoint site.
-        $cookie = $SPOCred.GetAuthenticationCookie($spSiteUrl)
-        #Step 2: create request
-        #Create a new HTTP client and configure its base address.
-        $client = New-Object System.Net.Http.HttpClient
-        $client.BaseAddress = $spSiteUrl
-        #Add common request headers for the REST API to the HTTP client.
-        $client.DefaultRequestHeaders.Add("Api-Key", $apiKey)
-        #Get the SharePoint authorization cookie to be used by the HTTP client
-        #for the request, and use it for the Authorization request header.
-        if ($cookie) {
-            $authHeader = New-Object System.Net.Http.Headers.AuthenticationHeaderValue("cookie", [string]::Format("{0} {1}", $spSiteUrl, $cookie))
-            $client.DefaultRequestHeaders.Authorization = $authHeader
-        }
+        $client = New-HttpClient -apiKey $apiKey -spSiteUrl $spSiteUrl
+        
         #If we're at this point, we're ready to make our request.
         #Note that we're making this call synchronously - you can call the REST API
         #asynchronously, as needed.
@@ -489,22 +357,23 @@ function exportNintexFormO365() {
         }
     }
 }
-function importNintexFormO365() {
+
+function Import-NintexFormO365() {
     <#
     .SYNOPSIS
-    Funktion fï¿½r das importieren eines Nintex Forms in einer Office 365 Umgebung.
+    Funktion f�r das importieren eines Nintex Forms in einer Office 365 Umgebung.
     .DESCRIPTION
     Die Funktion spricht eine eigene Nintex API an um einen Formular zu importieren.
-    Der Process importiert, speichert, und verï¿½ffentlicht das Formular.
+    Der Process importiert, speichert, und ver�ffentlicht das Formular.
     https://help.nintex.com/en-us/sdks/sdko365/Default.htm#FormSDK/Topics/SDK_NFO_PRC_ImportNewForm.htm%3FTocPath%3DNintex%2520Office%2520365%2520API%7CNintex%2520Forms%2520for%2520Office%2520365%2520REST%2520API%7CGuide%7C_____2
     .PARAMETER apiKey
-    APIKEY fï¿½r die Nintex Office 365 API
+    APIKEY f�r die Nintex Office 365 API
     .PARAMETER apiRootUrl
-    ROOT URL fï¿½r die Nintex Office 365 API    
+    ROOT URL f�r die Nintex Office 365 API    
     .PARAMETER spSiteUrl
     URL zur SharePoint Seite
     .PARAMETER listId
-    List ID wo das Formular verï¿½ffentlicht werden soll
+    List ID wo das Formular ver�ffentlicht werden soll
     .PARAMETER importPath
     Pfad wo das zu speichernde Form liegt
     .EXAMPLE
@@ -522,28 +391,8 @@ function importNintexFormO365() {
     )
     process 
     {
-        Add-Type -AssemblyName "System.Net.Http"
-        #Step 1: create authorization tooken
-        # Create a new SharePointOnlineCredentials object, using the specified credential.
-        # $credential = Get-Credential
-        # $SPOCred = New-Object -TypeName Microsoft.SharePoint.Client.SharePointOnlineCredentials -ArgumentList $credential.UserName, $credential.Password 
-        # Return the authentication cookie from the SharePointOnlineCredentials object, 
-        # using the specified SharePoint site.
-        $cookie = $SPOCred.GetAuthenticationCookie($spSiteUrl)
-        #Step 2: create request
-        #Create a new HTTP client and configure its base address.
-        $client = New-Object System.Net.Http.HttpClient
-        $client.BaseAddress = $spSiteUrl
-        #Add common request headers for the REST API to the HTTP client.
-        $header = New-Object System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json")
-        $client.DefaultRequestHeaders.Accept.Add($Header)
-        $client.DefaultRequestHeaders.Add("Api-Key", $apiKey)
-        #Get the SharePoint authorization cookie to be used by the HTTP client
-        #for the request, and use it for the Authorization request header.
-        if ($cookie) {
-            $authHeader = New-Object System.Net.Http.Headers.AuthenticationHeaderValue("cookie", [string]::Format("{0} {1}", $spSiteUrl, $cookie))
-            $client.DefaultRequestHeaders.Authorization = $authHeader
-        }
+        $client = New-HttpClient -apiKey $apiKey -spSiteUrl $spSiteUrl
+
         #Read the file.
         $exportFileContents = [IO.File]::ReadAllBytes($importPath);
         $saveContent = New-Object System.Net.Http.ByteArrayContent($exportFileContents, 0, $exportFileContents.Length)
@@ -562,21 +411,22 @@ function importNintexFormO365() {
         }
     }
 }
-function saveNintexFormO365() {
+
+function Save-NintexFormO365() {
     <#
     .SYNOPSIS
-    Funktion fï¿½r das speichern eines Nintex Forms in einer Office 365 Umgebung.
+    Funktion f�r das speichern eines Nintex Forms in einer Office 365 Umgebung.
     .DESCRIPTION
     Die Funktion spricht eine eigene Nintex API an um einen Formular zu speichern.
     https://help.nintex.com/en-us/sdks/sdko365/Default.htm#FormSDK/Topics/SDK_NFO_PRC__SaveForm.htm%3FTocPath%3DNintex%2520Office%2520365%2520API%7CNintex%2520Forms%2520for%2520Office%2520365%2520REST%2520API%7CGuide%7C_____3
     .PARAMETER apiKey
-    APIKEY fï¿½r die Nintex Office 365 API
+    APIKEY f�r die Nintex Office 365 API
     .PARAMETER apiRootUrl
-    ROOT URL fï¿½r die Nintex Office 365 API    
+    ROOT URL f�r die Nintex Office 365 API    
     .PARAMETER spSiteUrl
     URL zur SharePoint Seite
     .PARAMETER listId
-    List ID wo das Formular verï¿½ffentlicht werden soll
+    List ID wo das Formular ver�ffentlicht werden soll
     .PARAMETER importPath
     Pfad wo das zu speichernde Form liegt
     .EXAMPLE
@@ -632,21 +482,22 @@ function saveNintexFormO365() {
         }
     }
 }
-function publishNintexFormO365() {
+
+function Publish-NintexFormO365() {
     <#
     .SYNOPSIS
-    Funktion für das veröffentlichen eines Nintex Forms in einer Office 365 Umgebung.
+    Funktion f??r das ver?�ffentlichen eines Nintex Forms in einer Office 365 Umgebung.
     .DESCRIPTION
-    Die Funktion spricht eine eigene Nintex API an um einen Formular zu veröffentlichen.
+    Die Funktion spricht eine eigene Nintex API an um einen Formular zu ver?�ffentlichen.
     https://help.nintex.com/en-us/sdks/sdko365/Default.htm#FormSDK/Topics/SDK_NFO_PRC_PublishForm.htm%3FTocPath%3DNintex%2520Office%2520365%2520API%7CNintex%2520Forms%2520for%2520Office%2520365%2520REST%2520API%7CGuide%7C_____4
     .PARAMETER apiKey
-    APIKEY für die Nintex Office 365 API
+    APIKEY f??r die Nintex Office 365 API
     .PARAMETER apiRootUrl
-    ROOT URL für die Nintex Office 365 API    
+    ROOT URL f??r die Nintex Office 365 API    
     .PARAMETER spSiteUrl
     URL zur SharePoint Seite
     .PARAMETER listId
-    List ID wo das Formular veröffentlicht werden soll
+    List ID wo das Formular ver?�ffentlicht werden soll
     .EXAMPLE
     publishNintexFormO365 -apiKey "6d71f59244f74ba78875768b9c1c9ef6" -apiRootUrl "https://busitec.nintexo365.com" -spSiteUrl "https://busitec.sharepoint.com/sites/dev-stwms-onboarding" -listId "1b0fbebf-392d-4cde-8351-f24a88436459"
     #>
@@ -661,6 +512,61 @@ function publishNintexFormO365() {
     )
     process 
     {
+        $client = New-HttpClient -apiKey $apiKey -spSiteUrl $spSiteUrl
+
+        #If we're at this point, we're ready to make our request.
+        #Note that we're making this call synchronously - you can call the REST API
+        #asynchronously, as needed.
+        $publishFormUri = [string]::Format("{0}/api/v1/forms/{1}/publish", $apiRootUrl.TrimEnd("/"), [uri]::EscapeUriString($listId))
+        $stringContent = New-Object System.Net.Http.StringContent("")
+        $response = $client.PostAsync($publishFormUri, $stringContent).Result
+        #If we're successful, write an export file from the body of the response.
+        if ($response.IsSuccessStatusCode -eq $true) {
+            Write-Verbose "Form has been published!"
+        }
+        else {
+            Write-Host "Error while processing the REST-API call to Nintex!"
+            Write-Host "$($response.ReasonPhrase)"
+        }
+    }
+}
+
+function Remove-NintexFormO365(){
+    [CmdletBinding()]
+    param
+    (
+        [Parameter(Mandatory = $true)][string] $apiKey,
+        [Parameter(Mandatory = $true)][string] $apiRootUrl,
+        [Parameter(Mandatory = $true)][string] $spSiteUrl,
+        [Parameter(Mandatory = $true)][string] $listId,
+        [Parameter(Mandatory = $true)][string] $contentTypId,
+        [Parameter(Mandatory = $true)][Microsoft.SharePoint.Client.SharePointOnlineCredentials] $SPOCred
+    )
+    process {
+        $client = New-HttpClient -apiKey $apiKey -spSiteUrl $spSiteUrl
+
+        #If we're at this point, we're ready to make our request.
+        #Note that we're making this call synchronously - you can call the REST API
+        #asynchronously, as needed.
+        $deleteFormUri = [string]::Format("{0}/api/v1/forms/{1},{2}", $apiRootUrl.TrimEnd("/"), [uri]::EscapeUriString($listId), [uri]::EscapeUriString($contentTypId))
+        $response = $client.DeleteAsync($deleteFormUri).Result
+        #If we're successful, write an export file from the body of the response.
+        if ($response.IsSuccessStatusCode -eq $true) {
+            Write-Verbose "Form has been deleted!"
+        }
+        else {
+            Write-Host "Error while processing the REST-API call to Nintex!"
+            Write-Host "$($response.ReasonPhrase)"
+        }        
+    }
+}
+
+function New-HttpClient {
+    param (
+        [Parameter(Mandatory = $true)][string] $apiKey,
+        [Parameter(Mandatory = $true)][string] $spSiteUrl
+    )
+    process {
         Add-Type -AssemblyName "System.Net.Http"
         #Step 1: create authorization tooken
         # Create a new SharePointOnlineCredentials object, using the specified credential.
@@ -683,19 +589,7 @@ function publishNintexFormO365() {
             $authHeader = New-Object System.Net.Http.Headers.AuthenticationHeaderValue("cookie", [string]::Format("{0} {1}", $spSiteUrl, $cookie))
             $client.DefaultRequestHeaders.Authorization = $authHeader
         }
-        #If we're at this point, we're ready to make our request.
-        #Note that we're making this call synchronously - you can call the REST API
-        #asynchronously, as needed.
-        $publishFormUri = [string]::Format("{0}/api/v1/forms/{1}/publish", $apiRootUrl.TrimEnd("/"), [uri]::EscapeUriString($listId))
-        $stringContent = New-Object System.Net.Http.StringContent("")
-        $response = $client.PostAsync($publishFormUri, $stringContent).Result
-        #If we're successful, write an export file from the body of the response.
-        if ($response.IsSuccessStatusCode -eq $true) {
-            Write-Verbose "Form has been published!"
-        }
-        else {
-            Write-Host "Error while processing the REST-API call to Nintex!"
-            Write-Host "$($response.ReasonPhrase)"
-        }
+        return $client
     }
 }
+Export-ModuleMember -Function Export-NintexWorkflowO365, Import-NewNintexWorkflowO365, Import-ExistingNintexWorkflowO365, Save-NintexWorkflowO365, Publish-NintexWorkflowO365, Register-NintexWorkflowUseO365, Export-NintexFormO365, Import-NintexFormO365, Save-NintexFormO365, Publish-NintexFormO365, Remove-NintexFormO365
