@@ -80,10 +80,14 @@ catch {
 }
 
 $allScripts = Get-ChildItem -Path "$dp0\migrations\" -Directory | Sort-Object -Descending
+$allScriptsCount = $allScripts.Length
+$i = 0
 
 foreach ($currentScript in $allScripts) {    
     $currentDeployment = $currentScript.Name
     $previousDeployment = "{0:000}" -f [math]::Max($currentDeployment - 1, 0);
+
+    Write-Progress -Id 0 -Activity "Migration $currentDeployment" -Status "Processing" -PercentComplete ($i / $allScriptsCount * 100)
 
     Invoke-Migration `
         -fieldName "<%= $PLASTER_PARAM_FieldName %>" `
@@ -92,5 +96,5 @@ foreach ($currentScript in $allScripts) {
         -previousDeployment $previousDeployment `
         -down:$true `
         -path "$dp0\migrations\$currentScript"
-
+    $i++
 }
