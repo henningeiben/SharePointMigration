@@ -3,6 +3,9 @@
     Erstellt eine Infrastruktur auf der Basis von Migrationen
 .DESCRIPTION
     TBD
+.NOTES
+    Author: Henning Eiben
+    Requires: SharePointOnline PnP-PowerShell Module >= 3.0.0.0
 .PARAMETER webUrl
     Die URL an die die Migration angewendet werden soll
 .PARAMETER targetDeployment
