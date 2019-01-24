@@ -5,8 +5,9 @@
 This solution contains two Plaster-Templates that allow you to create new SharePoint-Projects using a migration-like approach. The other template creates new migrations to an existing project.
 
 ## Prerequisits
-- [SharePoint PnP-Powershell >= 3](https://github.com/PowerShell/Plaster)
-- [SharePoint 2013 / ~~2016~~ / Office365](https://github.com/SharePoint/PnP-PowerShell)
+- [Plaster](https://github.com/PowerShell/Plaster)
+- [SharePoint PnP-Powershell >= 3](https://github.com/SharePoint/PnP-PowerShell)
+- SharePoint 2013 / ~~2016~~ / Office365
 
 ## Usage
 
