@@ -66,12 +66,15 @@ function Invoke-Migration() {
             if ($down) {
                 Write-Host "Deployment $currentDeployment not yet applied; skipping"
             }
-            else {
+            elseif ($targetDeployment -ge $currentDeployment) {
                 & "$path\up.ps1"
 
                 $allProps[$fieldName] = $currentDeployment
                 $web.Update()
             }
+			else {
+				Write-Host "Target-Deployment reached, not applying $currentDeployment"
+			}
         }
         if ($ctx.HasPendingRequest) {
             $ctx.ExecuteQuery()
